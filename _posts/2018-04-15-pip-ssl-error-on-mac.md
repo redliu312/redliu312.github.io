@@ -1,7 +1,7 @@
 ---
 title : macOS High Sierra python SSL error 
 category : python
-tags : [macOS python]
+tags : [ macOS python ]
 ---
 
 ## objective
