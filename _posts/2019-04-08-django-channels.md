@@ -1,7 +1,7 @@
 ---
 title: django channels 2.x toy project on websocket
-category: python, django,
-tag: python, django
+category: [python, django]
+tag: [python, django]
 ---
 
 
