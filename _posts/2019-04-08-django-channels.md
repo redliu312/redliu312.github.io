@@ -24,9 +24,9 @@ tag: python, django
 
 websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
 原本http只能由browser端(client)對server做request. 如果想實現server端對client的notificaiton
-傳統上只能由client每隔一段時間對server做polling.
-而有了websocket就能避免這樣的設計。
-這種雙向的protocol第一時間能想到的應用有：
+傳統上只能由client每隔一段時間對server做polling.  
+而有了websocket就能避免這樣的設計。  
+這種雙向的protocol第一時間能想到的應用有：  
 
 - 聊天室
 - 線上多人遊戲
@@ -51,41 +51,99 @@ websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
     而我們可以透過在每個連線初始化時將個別的instance加入某個group
     當我們需要對 group內的成員傳送資料時，就能在channel layer裡找到相對應的group
 
-這樣帶過這一段真得是太抽象了，這裡應該畫個架構圖。
+
+(fixme:這樣帶過這一段真得是太抽象了，這裡應該畫個架構圖)。
 
 
 ## Demo project
 
 為了想要更了解channels的使用，  
-我看了幾分tutorial。大概都是聊天室或是傳送即時訊息的應用。 
+看了幾分tutorial。大概都是聊天室或是傳送即時訊息的應用。 
 
 [https://github.com/narrowfail/django-channels-chat](https://github.com/narrowfail/django-channels-chat) 
-這是一個即時通訊toy project 
+這是一個即時通訊toy project   
 他的架構是：  
 透過djanog rest api管理成員間的message(model),   
-在message model裡sender和reciever的foreignKey,  
-而前端每當打開一個對話窗時，會記錄當前的sender和reciever,   
-並且在submit訊息時會帶給message的api,  
-而新的message在save時會透過channel layer的group send去通知在group的成員。  
+在message model裡sender和reciever的foreignKey,   
+而前端每當打開一個對話窗時，會記錄當前的sender和reciever,    
+並且在submit訊息時會帶給message的api,   
+而新的message在save時會透過channel layer的group send去通知在group的成員。   
 
 
 ### 我的改良
 
 因為channels已經進版到 2.x的版本，所有的api都已經大幅改動。  
-原作者的程式碼是用1.x做的。並且有group send並沒有送到client的bug  
+原作者的程式碼是用1.x做的。並且有group send並沒有送到client的bug   
  
-我先把原本的程式碼改成channels 2.X並且改成用pipenv管理套件。 
+我先把原本的程式碼改成channels 2.X   
+並且改成用pipenv管理套件。  
 可以參考這個[PR](https://github.com/narrowfail/django-channels-chat/pull/6)  
+
+the most interesting  part(base on the original author code):
+
+
+on message model save, this take me some time to figure out
+how to use Channels 2.0 to do a group_send outside a consumer.
+
+
+```py
+    def notify_ws_clients(self):
+        """
+        Inform client there is a new message.
+        """
+        notification = {
+            'type': 'recieve_group_message',
+            'message': str(self.id)
+        }
+
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)("{}".format(self.user.id), notification)
+        async_to_sync(channel_layer.group_send)("{}".format(self.recipient.id), notification)
+
+    def save(self, *args, **kwargs):
+        """
+        Trims white spaces, saves the message and notifies the recipient via WS
+        if the message is new.
+        """
+        new = self.id
+        self.body = self.body.strip()  # Trimming whitespaces from the body
+        super(MessageModel, self).save(*args, **kwargs)
+        if new is None:
+            self.notify_ws_clients()
+
+
+```
 
 
 #### 繼續玩
 
 如果有一個app可以支援雙方一邊能夠聊天  
 又能夠一邊同步看youtube影片該有多好啊！(XDD 
-秉持者這樣的想法我再加一個websocket routing and consumer   
-讓前端可以把正在看的影片以及時間送給正在聊天的人(XDDDD   
-順便添加能deploy to  Heroku的設定檔   
- [https://github.com/redliu312/django-channels-chat/tree/heroku](https://github.com/redliu312/django-channels-chat/tree/heroku)
+
+
+再加一個websocket routing and consumer   
+讓前端可以把正在看的影片以及時間送給正在聊天的人   
+
+
+
+the most interesting part:
+
+- some js in app.js
+- youtube embed js api
+- sending sender and reciever id and the yt player information
+  to the websocket.
+  
+
+
+
+
+
+## deploy to heroku
+
+順便添加能deploy to  Heroku的設定檔  
+   
+[https://github.com/redliu312/django-channels-chat/tree/heroku](https://github.com/redliu312/django-channels-chat/tree/heroku)
 
 如果想在local run
 就用
@@ -93,6 +151,9 @@ websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
 ```bash
 python manage.py runserver --settings=chat.settings.local
 ```
+
+
+
 
 
 
