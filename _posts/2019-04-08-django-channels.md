@@ -35,18 +35,22 @@ websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
 
 ## channels本身的設計
 
-- scope:
+- scope:  
+
     每個連線建立時，所帶有的資訊。例如session, cookie, request 從哪裡來。
 
 
-- event
+- event:  
+
     從client來的要求，可能是http或是websocket
 
-- consumer, route
+- consumer, route:  
+
     對於各種不同的event,透過route決定要由哪一個consumer處理，consumer的角色有點像是django裡的view
     route有點類似django的url
 
-- channel layer, group
+- channel layer, group:  
+
     在這樣的架構下的連線都可以視為在server有相對應的application instance(process?)
     而我們可以透過在每個連線初始化時將個別的instance加入某個group
     當我們需要對 group內的成員傳送資料時，就能在channel layer裡找到相對應的group
