@@ -90,6 +90,10 @@ on message model save, this take me some time to figure out
 how to use Channels 2.0 to do a group_send outside a consumer.
 
 
+I learned a lot from the archiecture. Many thanks to the [author](https://github.com/narrowfail/django-channels-chat/commits?author=narrowfail)
+
+
+
 ```py
     def notify_ws_clients(self):
         """
@@ -145,7 +149,15 @@ the most interesting part:
 
 ## deploy to heroku
 
-順便添加能deploy to  Heroku的設定檔  
+順便添加能deploy to  Heroku的設定檔.  
+This take me some time for setting the heroku and asgi  
+application correctlly.  
+
+notices:
+
+- django_heroku package 
+- I turn off the collect static file.(setting the env variable)
+ 
    
 [https://github.com/redliu312/django-channels-chat/tree/heroku](https://github.com/redliu312/django-channels-chat/tree/heroku)
 
