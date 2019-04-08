@@ -83,12 +83,10 @@ websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
 並且改成用pipenv管理套件。  
 可以參考這個[PR](https://github.com/narrowfail/django-channels-chat/pull/6)  
 
-the most interesting  part(base on the original author code):
-
+在改成channels 2.0的過程中，最有趣的地方是在
 
 on message model save, this take me some time to figure out
 how to use Channels 2.0 to do a group_send outside a consumer.
-
 
 I learned a lot from the archiecture. Many thanks to the [author](https://github.com/narrowfail/django-channels-chat/commits?author=narrowfail)
 
@@ -131,22 +129,21 @@ I learned a lot from the archiecture. Many thanks to the [author](https://github
 
 
 再加一個websocket routing and consumer   
-讓前端可以把正在看的影片以及時間送給正在聊天的人   
+讓前端可以把正在看的影片以及時間送給正在聊天的人 
+後來想了一下，我直接透過websocket傳遞資料是比較容易出錯的。
+比較好的做法還是像message那一邊透過REST api去處理資料的格式以及驗證,
+而websocket只是拿來當作notification就好。  
+但也許有可能可以做到用websocket當作REST的媒介。 
+查了一下已經有人做這樣的package了。 [https://github.com/linuxlewis/channels-api](https://github.com/linuxlewis/channels-api)
+有機會來試試看。
 
+the most interesting parts on the youtube feature are:
 
-
-the most interesting part:
-
-- some js in app.js
 - youtube embed js api
 - sending sender and reciever id and the yt player information
   to the websocket.
+- the group handling on server side
   
-
-
-
-
-
 ## deploy to heroku
 
 順便添加能deploy to  Heroku的設定檔.  
