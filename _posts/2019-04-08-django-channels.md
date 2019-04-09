@@ -54,9 +54,11 @@ websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
     在這樣的架構下的連線都可以視為在server有相對應的application instance(process?)
     而我們可以透過在每個連線初始化時將個別的instance加入某個group
     當我們需要對 group內的成員傳送資料時，就能在channel layer裡找到相對應的group
+    
+[a good visual on channels architecture on heroku blog](https://heroku-blog-files.s3.amazonaws.com/posts/1473343845-django-wsgi.png)
 
 
-(fixme:這樣帶過這一段真得是太抽象了，這裡應該畫個架構圖)。
+
 
 
 ## Demo project
@@ -73,7 +75,7 @@ websocket 和傳統的http最大的差別就是websocket是雙向的protocol。
 並且在submit訊息時會帶給message的api,   
 而新的message在save時會透過channel layer的group send去通知在group的成員。   
 
-
+![channels toy project architecture]({{ site.url }}{{ site.baseurl }}/assets/images/1.png){:class="img-responsive"}
 ### 我的改良
 
 因為channels已經進版到 2.x的版本，所有的api都已經大幅改動。  
@@ -89,7 +91,6 @@ on message model save, this take me some time to figure out
 how to use Channels 2.0 to do a group_send outside a consumer.
 
 I learned a lot from the archiecture. Many thanks to the [author](https://github.com/narrowfail/django-channels-chat/commits?author=narrowfail)
-
 
 
 ```py
