@@ -34,7 +34,7 @@ After "some" trial and error I finally figured it out......
 
 The root cause is:
 
-###the sizes bytes must be divisible by GB###
+### the sizes bytes must be divisible by GB ###
 
 WWWWWWWWWWWWWWWWWWWWWWry!!!
 
