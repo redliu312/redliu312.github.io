@@ -39,7 +39,7 @@ The root cause is:
 WWWWWWWWWWWWWWWWWWWWWWry!!!
 
 In my opinion, this should be improved by the following two steps:
-- improve the docsting in the elastic_pool parameter
+- improve the docstring in the elastic_pool parameter
 - improve the error message. change it to "max_size_bytes must be divisible by GB, please change its value"
 
 
